@@ -1,52 +1,42 @@
-# -*- coding: utf-8 -*-
-import ...
 
+# coding: utf-8
+
+# In[1]:
+
+import csv
+import json
+import pickle
+from collections import Counter
+import string
 
 def main(filename):
-    # read file into lines
-    lines = ...
+    lines = open(filename).readlines()
 
-    # declare a word list
     all_words = []
 
-    # extract all words from lines
     for line in lines:
-        # split a line of text into a list words
-        # "I have a dream." => ["I", "have", "a", "dream."]
-        words = ...
-
-        # check the format of words and append it to "all_words" list
+        words = line.split()     
         for word in words:
-            # then, remove (strip) unwanted punctuations from every word
-            # "dream." => "dream"
-            word = ...
-            # check if word is not empty
+            for a in string.punctuation:
+                if a in word:
+                    if((word.index(a) == len(word) - 1) | (word.index(a) == 0)):
+                        word = word.replace(a, "")
+                 
             if word:
-                # append the word to "all_words" list
-                all_words...
+                all_words.append(word)
 
-    # compute word count from all_words
-    counter = ...
+    counter = Counter(all_words)
 
-    # dump to a csv file named "wordcount.csv":
-    # word,count
-    # a,12345
-    # I,23456
-    # ...
-    with open(...) as csv_file:
-        # create a csv writer from a file object (or descriptor)
-        writer = ...
-        # write table head
+    with open("wordcount.csv", "w", newline='') as csv_file:
+        writer = csv.writer(csv_file)        
         writer.writerow(['word', 'count'])
-        # write all (word, count) pair into the csv writer
-        writer.writerows(...)
+        writer.writerows(counter.most_common())
 
-    # dump to a json file named "wordcount.json"
-    ...
-
-    # BONUS: dump to a pickle file named "wordcount.pkl"
-    # hint: dump the Counter object directly
-
+    with open("wordcount.json", "w") as json_file:
+        writer = json.dump(counter.most_common(), json_file)
+  
+    with open("wordcount.pkl", "wb") as pkl_file:
+        writer = pickle.dump(counter.most_common(), pkl_file)
 
 if __name__ == '__main__':
     main("i_have_a_dream.txt")
